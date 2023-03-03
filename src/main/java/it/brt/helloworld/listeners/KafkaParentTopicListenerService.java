@@ -48,6 +48,7 @@ public class KafkaParentTopicListenerService
 
         }   catch (Exception e) {
             System.err.println(e );
+
             e.printStackTrace();
         }
 
