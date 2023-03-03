@@ -1,5 +1,6 @@
 package it.brt.helloworld.config;
 
+import it.brt.school.course.parentstudents.models.StudentJustificationMessage;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
