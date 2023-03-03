@@ -12,12 +12,12 @@ import java.util.Date;
 @Component
 public class KafkaParentTopicListenerService
 {
-
-    @KafkaListener(topics = "#{'${spring.kafka.topics}'.split(',')}", groupId = "groupid")
-    public void listenMessage(String message) {
-        System.out.println("Received Message in group foo: " + message);
-    }
-
+//
+//    @KafkaListener(topics = "#{'${spring.kafka.topics}'.split(',')}", groupId = "groupid")
+//    public void listenMessage(String message) {
+//        System.out.println("Received Message in group foo: " + message);
+//    }
+//
     @Autowired
     StudentJustificationService studentJustificationService;
 
