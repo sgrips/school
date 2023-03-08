@@ -2,8 +2,10 @@ package it.brt.helloworld.web;
 
 
 import it.brt.helloworld.models.Classe;
+import it.brt.helloworld.models.StudentJustification;
 import it.brt.helloworld.models.Studente;
 import it.brt.helloworld.services.ClasseService;
+import it.brt.helloworld.services.StudentJustificationService;
 import it.brt.helloworld.services.StudenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,9 @@ public class ApiController {
     StudenteService studenteService;
     @Autowired
     ClasseService classeService;
+
+    @Autowired
+    StudentJustificationService studentJustificationService;
 
     @GetMapping(value = {"/hello", "/hello/{name}"})
     public String Hello(@PathVariable(name = "name") Optional<String> name) {
@@ -152,6 +157,26 @@ public class ApiController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(path = "/parent/justification")
+    public ResponseEntity<List<StudentJustification>> getJustifications() {
+        List<StudentJustification> studentJustification;
+        try {
+            studentJustification= studentJustificationService.getStudentJustifications();
+
+
+            if (studentJustification.isEmpty())
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+
+            return new ResponseEntity<>(studentJustification, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
 
 
 }

@@ -35,16 +35,17 @@ public class KafkaParentTopicListenerService
     public void studentJustificationListener(StudentJustificationMessage studentJustificationMessage) {
 
         try{
-            studentJustificationService.createStudentJustification(new StudentJustification()
-                    {{
-                    setAbsentFrom(studentJustificationMessage.getAbsentFrom());
-            setAbsentTo(studentJustificationMessage.getAbsentTo());
-            setParentSignature(studentJustificationMessage.getParentSignature());
-            setStudentName(studentJustificationMessage.getStudentName());
-            setStudentLastName(studentJustificationMessage.getStudentLastName());
-            setCreateTime(new Date());
-        }})
-            ;
+
+            StudentJustification js = new StudentJustification();
+            js.setAbsentFrom(studentJustificationMessage.getAbsentFrom());
+            js.setAbsentTo(studentJustificationMessage.getAbsentTo());
+            js.setParentSignature(studentJustificationMessage.getParentSignature());
+            js.setStudentName(studentJustificationMessage.getStudentName());
+            js.setStudentLastName(studentJustificationMessage.getStudentLastName());
+            js.setCreateTime(new Date());
+
+
+            studentJustificationService.createStudentJustification(js) ;
 
         }   catch (Exception e) {
             System.err.println(e );
