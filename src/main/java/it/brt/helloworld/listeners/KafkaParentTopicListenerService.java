@@ -1,59 +1,35 @@
 package it.brt.helloworld.listeners;
 
 import it.brt.helloworld.models.StudentJustification;
-import it.brt.helloworld.repositories.ClasseRepository;
-import it.brt.helloworld.services.ClasseService;
 import it.brt.helloworld.services.StudentJustificationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
-import it.brt.school.course.parentstudents.models.StudentJustificationMessage;
-
-import java.util.Date;
-import java.util.List;
 
 @Component
-public class KafkaParentTopicListenerService
-{
-//
-//    @KafkaListener(topics = "#{'${spring.kafka.topics}'.split(',')}", groupId = "groupid")
-//    public void listenMessage(String message) {
-//        System.out.println("Received Message in group foo: " + message);
-//    }
-//
+public class KafkaParentTopicListenerService {
+
     @Autowired
     StudentJustificationService studentJustificationService;
 
-    @Autowired
-    ClasseService classeService;
-
+    private static final Logger log = LoggerFactory.getLogger(KafkaParentTopicListenerService.class);
 
     @KafkaListener(
             topics =  "#{'${spring.kafka.topics}'.split(',')}",
             groupId = "groupid",
             containerFactory = "studentJustificationKafkaListenerContainerFactory")
-    public void studentJustificationListener(StudentJustificationMessage studentJustificationMessage) {
-
-        try{
-
-            StudentJustification js = new StudentJustification();
-            js.setAbsentFrom(studentJustificationMessage.getAbsentFrom());
-            js.setAbsentTo(studentJustificationMessage.getAbsentTo());
-            js.setParentSignature(studentJustificationMessage.getParentSignature());
-            js.setStudentName(studentJustificationMessage.getStudentName());
-            js.setStudentLastName(studentJustificationMessage.getStudentLastName());
-            js.setCreateTime(new Date());
-
-
-            studentJustificationService.createStudentJustification(js) ;
-
-        }   catch (Exception e) {
-            System.err.println(e );
-
-            e.printStackTrace();
-        }
-
-
+    @RetryableTopic(
+            backoff = @Backoff(value = 3000L),
+            attempts = "5",
+            autoCreateTopics = "true",
+            exclude = NullPointerException.class)
+    public void studentJustificationListener(StudentJustification studentJustification) {
+        log.info("Received justification: {}", studentJustification);
+        studentJustificationService.createStudentJustification(studentJustification) ;
     }
 
 }

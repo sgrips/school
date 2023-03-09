@@ -1,6 +1,6 @@
 package it.brt.helloworld.config;
 
-import it.brt.school.course.parentstudents.models.StudentJustificationMessage;
+import it.brt.helloworld.models.StudentJustification;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,36 +23,21 @@ public class KafkaConsumerConfig {
     @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
 
-
-
-
     @Bean
-    public ConsumerFactory<String, StudentJustificationMessage> studentJustificationConsumerFactory() {
+    public ConsumerFactory<String, StudentJustification> studentJustificationConsumerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(
-                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                bootstrapAddress);
-        props.put(
-                ConsumerConfig.GROUP_ID_CONFIG,
-                "groupid");
-        props.put(
-                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-                StringDeserializer.class);
-        props.put(
-                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                StringDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(
-                props,
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "groupid");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        return new DefaultKafkaConsumerFactory<>(props,
                 new StringDeserializer(),
-                new JsonDeserializer<>(StudentJustificationMessage.class));
+                new JsonDeserializer<>(StudentJustification.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, StudentJustificationMessage>
-    studentJustificationKafkaListenerContainerFactory() {
-
-        ConcurrentKafkaListenerContainerFactory<String, StudentJustificationMessage> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, StudentJustification> studentJustificationKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, StudentJustification> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(studentJustificationConsumerFactory());
         return factory;
     }
